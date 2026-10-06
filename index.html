@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive results of a machine learning study of food insecurity among 9,494 rural Afghan households, FAO DIEM Round 8.">
+<title>Food Insecurity in Rural Afghanistan: Thesis Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F1F2F8;
+  --surface: #FFFFFF;
+  --surface-2: #E7EAF4;
+  --ink: #13204B;
+  --ink-2: #444F7A;
+  --ink-3: #7A82A4;
+  --gold: #94702A;
+  --gold-line: rgba(148, 112, 42, 0.32);
+  --rule: rgba(19, 32, 75, 0.12);
+  --poor: #B2343F;
+  --borderline: #C98A1B;
+  --acceptable: #23867D;
+  --p0: #3F6FB8;
+  --p1: #B8862E;
+  --p2: #5E8A57;
+  --p3: #8E5A92;
+  --map-stroke: rgba(255, 255, 255, 0.9);
+  --map-empty: #D9DDEA;
+  --ramp-mid: #E3CF98;
+  --shadow: 0 1px 0 rgba(19, 32, 75, 0.04), 0 18px 40px -24px rgba(19, 32, 75, 0.35);
+  --serif: 'Cormorant Garamond', Garamond, 'Times New Roman', serif;
+  --sans: 'Figtree', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0C1534;
+    --surface: #121E47;
+    --surface-2: #19285A;
+    --ink: #EFE9DB;
+    --ink-2: #B9BED6;
+    --ink-3: #8189AC;
+    --gold: #D1AD62;
+    --gold-line: rgba(209, 173, 98, 0.30);
+    --rule: rgba(239, 233, 219, 0.10);
+    --poor: #D2525B;
+    --borderline: #E5AE43;
+    --acceptable: #3FB0A5;
+    --p0: #86A9E6;
+    --p1: #DDB66C;
+    --p2: #97BC8A;
+    --p3: #C595C6;
+    --map-stroke: rgba(209, 173, 98, 0.75);
+    --map-empty: #1E2C5E;
+    --ramp-mid: #D8C487;
+    --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0C1534;
+  --surface: #121E47;
+  --surface-2: #19285A;
+  --ink: #EFE9DB;
+  --ink-2: #B9BED6;
+  --ink-3: #8189AC;
+  --gold: #D1AD62;
+  --gold-line: rgba(209, 173, 98, 0.30);
+  --rule: rgba(239, 233, 219, 0.10);
+  --poor: #D2525B;
+  --borderline: #E5AE43;
+  --acceptable: #3FB0A5;
+  --p0: #86A9E6;
+  --p1: #DDB66C;
+  --p2: #97BC8A;
+  --p3: #C595C6;
+  --map-stroke: rgba(209, 173, 98, 0.75);
+  --map-empty: #1E2C5E;
+  --ramp-mid: #D8C487;
+  --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { height: 100%; scroll-behavior: smooth; scroll-padding-top: calc(env(safe-area-inset-top, 0px) + 76px); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+img, svg { max-width: 100%; }
+a { color: var(--gold); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+.wrap { width: min(1200px, 100% - 48px); margin: 0 auto; }
+
+/* header */
+.topbar {
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--rule);
+}
+.topbar .wrap { display: flex; align-items: center; gap: 24px; height: 64px; }
+.brand { font-family: var(--serif); font-size: 1.32rem; font-weight: 600; letter-spacing: 0.01em; white-space: nowrap; color: var(--ink); text-decoration: none; }
+.brand span { color: var(--gold); }
+.nav { display: flex; gap: 4px; margin-left: auto; overflow-x: auto; scrollbar-width: none; }
+.nav::-webkit-scrollbar { display: none; }
+.nav a { color: var(--ink-2); text-decoration: none; font-size: 0.9rem; font-weight: 500; padding: 8px 12px; border-radius: 999px; white-space: nowrap; }
+.nav a:hover { color: var(--ink); background: var(--surface-2); }
+.icon-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  height: 38px; min-width: 38px; padding: 0 12px; border-radius: 999px;
+  border: 1px solid var(--gold-line); background: transparent; color: var(--ink);
+  font: 500 0.88rem var(--sans); cursor: pointer; text-decoration: none; white-space: nowrap;
+}
+.icon-btn:hover { border-color: var(--gold); }
+.actions { display: flex; gap: 8px; margin-left: auto; flex: none; }
+.nav + .actions { margin-left: 8px; }
+.brand { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.icon-btn svg { width: 17px; height: 17px; }
+
+/* hero */
+.hero { padding: 56px 0 36px; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.25fr); gap: 48px; align-items: start; }
+h1 {
+  font-family: var(--serif); font-weight: 600; font-size: clamp(2.7rem, 5.4vw, 4.7rem);
+  line-height: 1.0; letter-spacing: -0.01em; margin: 0 0 22px;
+}
+.lede { font-size: 1.08rem; color: var(--ink-2); max-width: 46ch; margin: 0 0 28px; }
+.dist { margin: 0 0 30px; }
+.dist-label { font-size: 0.92rem; color: var(--ink-2); margin-bottom: 10px; }
+.stack { display: flex; height: 16px; border-radius: 999px; overflow: hidden; background: var(--surface-2); }
+.stack span { display: block; height: 100%; transition: width 0.6s cubic-bezier(.2,.7,.2,1); }
+.stack-legend { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 10px; font-size: 0.88rem; color: var(--ink-2); }
+.stack-legend b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; }
+
+.seg { display: inline-flex; padding: 3px; border-radius: 999px; background: var(--surface-2); gap: 2px; flex-wrap: wrap; }
+.seg button {
+  border: 0; background: transparent; color: var(--ink-2); font: 500 0.86rem var(--sans);
+  padding: 7px 14px; border-radius: 999px; cursor: pointer; white-space: nowrap;
+}
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); box-shadow: 0 1px 2px rgba(0,0,0,.12); }
+
+.detail {
+  margin-top: 22px; padding: 22px 24px; border-radius: 18px; background: var(--surface);
+  border: 1px solid var(--gold-line); box-shadow: var(--shadow); min-height: 210px;
+}
+.detail-name { font-family: var(--serif); font-size: 2rem; font-weight: 600; line-height: 1.1; margin: 0; }
+.detail-hint { color: var(--ink-3); font-size: 0.88rem; margin: 4px 0 14px; }
+.detail-big { display: flex; align-items: baseline; gap: 12px; margin: 6px 0 14px; }
+.detail-big .num { font-family: var(--serif); font-size: 3.4rem; font-weight: 600; line-height: 1; color: var(--poor); font-variant-numeric: lining-nums tabular-nums; }
+.detail-big .txt { color: var(--ink-2); font-size: 0.95rem; max-width: 22ch; line-height: 1.35; }
+.detail-rows { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; font-size: 0.9rem; }
+.detail-rows div span { display: block; color: var(--ink-3); font-size: 0.8rem; }
+.detail-rows div strong { font-weight: 600; }
+
+.map-frame {
+  position: relative; border-radius: 26px; padding: 18px 18px 12px;
+  background: radial-gradient(120% 90% at 30% 20%, var(--surface-2), var(--surface) 70%);
+  border: 1px solid var(--gold-line); box-shadow: var(--shadow);
+}
+.map-frame svg { display: block; width: 100%; height: auto; }
+.prov { stroke: var(--map-stroke); stroke-width: 0.9; stroke-linejoin: round; cursor: pointer; transition: fill 0.45s ease, opacity 0.3s ease; }
+.prov:hover, .prov.is-active { stroke: var(--gold); stroke-width: 2.6; }
+.prov:focus { outline: none; }
+.prov:focus-visible { stroke: var(--gold); stroke-width: 3.2; }
+.map-tools { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-top: 12px; }
+.legend { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; color: var(--ink-2); }
+.legend .ramp { width: 170px; height: 10px; border-radius: 999px; }
+.legend-cats { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 0.82rem; color: var(--ink-2); }
+.map-note { font-size: 0.8rem; color: var(--ink-3); margin: 10px 2px 0; }
+.rank-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 28px; margin-top: 26px; }
+.rank-title { font-family: var(--serif); font-size: 1.35rem; font-weight: 600; margin: 0 0 6px; }
+.rank-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) 64px 46px; align-items: center; gap: 10px; width: 100%; padding: 7px 4px; border: 0; border-bottom: 1px solid var(--rule); background: transparent; color: var(--ink); font: 500 0.9rem var(--sans); text-align: left; cursor: pointer; }
+.rank-row:hover, .rank-row.is-active { color: var(--gold); }
+.rank-row .n { color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.rank-row .mini { height: 6px; border-radius: 999px; }
+.rank-row .v { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+
+/* sections */
+section.block { padding: 72px 0 24px; }
+.block-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 32px 48px; align-items: end; margin-bottom: 34px; }
+h2 {
+  font-family: var(--serif); font-weight: 600; font-size: clamp(2rem, 3.6vw, 3rem);
+  line-height: 1.05; margin: 0; letter-spacing: -0.005em;
+}
+.block-head p { margin: 0; color: var(--ink-2); max-width: 56ch; }
+.chapter { display: block; font-family: var(--serif); font-style: italic; font-size: 1.15rem; color: var(--gold); margin-bottom: 8px; }
+.panel { background: var(--surface); border-radius: 20px; padding: 24px; border: 1px solid var(--rule); }
+.panel h3 { font-size: 1rem; font-weight: 600; margin: 0 0 4px; }
+.panel .sub { font-size: 0.86rem; color: var(--ink-3); margin: 0 0 16px; }
+.panel-head { display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; margin-bottom: 14px; }
+.grid-3 { display: grid; grid-template-columns: 1.15fr 1fr 1fr; gap: 20px; }
+.grid-2 { display: grid; grid-template-columns: 1.25fr 1fr; gap: 20px; }
+.facts { display: flex; flex-wrap: wrap; gap: 12px 36px; margin-top: 22px; color: var(--ink-2); font-size: 0.92rem; }
+.facts strong { font-family: var(--serif); font-size: 1.45rem; color: var(--ink); font-weight: 600; margin-right: 6px; }
+.chart { width: 100%; height: auto; display: block; overflow: visible; }
+.chart text { font-family: var(--sans); fill: var(--ink-2); font-size: 12px; }
+.chart .t-ink { fill: var(--ink); }
+.chart .t-strong { fill: var(--ink); font-weight: 600; }
+.chart .grid { stroke: var(--rule); }
+
+/* importance */
+.province-stat { display: flex; align-items: center; gap: 26px; padding: 4px 0 22px; border-bottom: 1px solid var(--rule); margin-bottom: 18px; }
+.province-stat .big { font-family: var(--serif); font-size: clamp(3.6rem, 7vw, 5.4rem); font-weight: 600; line-height: 0.9; color: var(--gold); }
+.province-stat p { margin: 0; color: var(--ink-2); max-width: 40ch; }
+.province-stat p strong { color: var(--ink); }
+
+/* profiles */
+.profiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
+.profile { position: relative; background: var(--surface); border-radius: 22px; padding: 22px 20px 20px; border: 1px solid var(--rule); display: flex; flex-direction: column; }
+.profile::before { content: ""; position: absolute; left: 20px; right: 20px; top: 0; height: 3px; border-radius: 0 0 4px 4px; background: var(--pc); }
+.profile .pnum { font-family: var(--serif); font-style: italic; color: var(--pc); font-size: 1.05rem; }
+.profile h3 { font-family: var(--serif); font-size: 1.55rem; line-height: 1.1; font-weight: 600; margin: 2px 0 6px; min-height: 2.2em; }
+.profile .hh { font-size: 0.86rem; color: var(--ink-3); margin-bottom: 16px; }
+.profile .poor { display: flex; align-items: baseline; gap: 8px; margin-bottom: 10px; }
+.profile .poor b { font-family: var(--serif); font-size: 3rem; line-height: 1; color: var(--poor); font-weight: 600; }
+.profile .poor span { font-size: 0.86rem; color: var(--ink-2); line-height: 1.3; }
+.profile ul { list-style: none; padding: 0; margin: 16px 0 0; font-size: 0.9rem; color: var(--ink-2); }
+.profile li { padding: 8px 0; border-top: 1px solid var(--rule); }
+.profile li:first-child { border-top: 0; }
+.profile .stats { display: flex; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 14px; font-size: 0.82rem; color: var(--ink-3); }
+.profile .stats strong { display: block; color: var(--ink); font-size: 1.05rem; font-weight: 600; }
+.milk { margin-top: 20px; }
+.bars-h { display: grid; gap: 12px; }
+.bar-row { display: grid; grid-template-columns: 190px minmax(0, 1fr) 54px; gap: 12px; align-items: center; font-size: 0.9rem; }
+.bar-row .track { height: 14px; border-radius: 999px; background: var(--surface-2); overflow: hidden; }
+.bar-row .fill { height: 100%; border-radius: 999px; transition: width 0.6s cubic-bezier(.2,.7,.2,1); }
+.bar-row .val { font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+
+/* no income */
+.income-grid { display: grid; grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr); gap: 40px; align-items: center; }
+.giant { font-family: var(--serif); font-size: clamp(5rem, 12vw, 9rem); line-height: 0.85; font-weight: 600; color: var(--poor); margin: 0 0 12px; }
+.giant-cap { font-size: 1.1rem; color: var(--ink-2); max-width: 36ch; margin: 0; }
+
+/* tooltip */
+.tip {
+  position: fixed; z-index: 50; pointer-events: none; opacity: 0; transform: translateY(4px);
+  background: var(--ink); color: var(--bg); padding: 9px 12px; border-radius: 10px; font-size: 0.84rem; line-height: 1.4;
+  transition: opacity 0.15s ease, transform 0.15s ease; max-width: 260px; box-shadow: 0 10px 30px rgba(0,0,0,.25);
+}
+.tip.show { opacity: 1; transform: translateY(0); }
+.tip b { font-weight: 600; }
+
+footer { margin-top: 80px; padding: 48px 0 64px; border-top: 1px solid var(--gold-line); color: var(--ink-2); font-size: 0.92rem; }
+.foot-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 40px; }
+footer h2 { font-size: 1.9rem; margin-bottom: 12px; }
+footer p { margin: 0 0 10px; max-width: 62ch; }
+
+@media (max-width: 1020px) {
+  .hero-grid, .block-head, .grid-2, .income-grid, .foot-grid { grid-template-columns: 1fr; }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .grid-3 > :first-child { grid-column: 1 / -1; }
+  .profiles { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 640px) {
+  .wrap { width: min(1200px, 100% - 28px); }
+  .nav { display: none; }
+  .icon-btn span { display: none; }
+  .icon-btn { padding: 0 10px; }
+  .brand { font-size: 1.1rem; }
+  .brand span { display: none; }
+  .rank-grid { grid-template-columns: 1fr; }
+  .grid-3, .profiles { grid-template-columns: 1fr; }
+  .bar-row { grid-template-columns: 120px minmax(0, 1fr) 46px; font-size: 0.84rem; }
+  .detail-rows { grid-template-columns: 1fr; }
+  .province-stat { flex-direction: column; align-items: start; gap: 10px; }
+  .hero { padding-top: 32px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">Rural Afghanistan <span>food insecurity</span></a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#map">Map</a><a href="#models">Prediction</a><a href="#predictors">Predictors</a>
+      <a href="#profiles">Profiles</a><a href="#income">No income</a><a href="#time">Over time</a><a href="#about">About</a>
+    </nav>
+    <div class="actions"><button class="icon-btn" id="themeBtn" type="button" aria-label="Switch between light and dark theme">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+    <a class="icon-btn" href="https://github.com/MMSSARWARI/afghanistan-food-insecurity-thesis" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5a11.5 11.5 0 0 0-3.6 22.4c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.2 1.2a11 11 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.8.1 3.1.8.8 1.2 1.9 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.3c0 .3.2.7.8.6A11.5 11.5 0 0 0 12 .5z"/></svg>
+      <span>Code</span>
+    </a></div>
+  </div>
+</header>
+
+<main id="top">
+  <section class="hero" id="map">
+    <div class="wrap hero-grid">
+      <div class="text-col">
+        <h1>Who goes hungry in rural Afghanistan?</h1>
+        <p class="lede">Results of a machine learning study of 9,494 rural households in all 34 provinces, surveyed by FAO in January and February 2024. Select a province to see how many households had poor food consumption.</p>
+        <div class="dist">
+          <div class="dist-label">Food consumption of rural households in early 2024, weighted</div>
+          <div class="stack" id="heroStack" role="img" aria-label="Poor 33.1 percent, borderline 47.0 percent, acceptable 19.9 percent"></div>
+          <div class="stack-legend" id="heroLegend"></div>
+        </div>
+        <div class="seg" role="group" aria-label="Map view" id="mapMode">
+          <button type="button" data-mode="w" aria-pressed="true">Poor share, weighted</button>
+          <button type="button" data-mode="u" aria-pressed="false">Unweighted</button>
+          <button type="button" data-mode="prof" aria-pressed="false">Most common profile</button>
+        </div>
+        <div class="detail" id="detail" aria-live="polite"></div>
+      </div>
+      <div class="map-col">
+        <div class="map-frame">
+          <svg id="mapSvg" role="group" aria-label="Map of Afghanistan by province"></svg>
+          <div class="map-tools"><div id="legend"></div></div>
+        </div>
+        <p class="map-note" id="mapNote">Share of households in the Poor food consumption group, DIEM Round 8. Province boundaries: Natural Earth.</p>
+        <div class="rank-grid"><div><h3 class="rank-title">Highest Poor shares</h3><div id="rankTop"></div></div><div><h3 class="rank-title">Lowest Poor shares</h3><div id="rankLow"></div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="models">
+    <div class="wrap">
+      <div class="block-head">
+        <div><span class="chapter">Prediction</span><h2>Household characteristics alone predict the right group for 72% of households</h2></div>
+        <p>Three models learned from 7,120 households and were tested on 2,374 households they had never seen. Always guessing the most common group would be right for only 43.3%.</p>
+      </div>
+      <div class="grid-3">
+        <div class="panel">
+          <h3>Model comparison</h3>
+          <p class="sub">Test set results. The dashed line is the baseline of always guessing Borderline.</p>
+          <div id="modelChart"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div><h3>Where XGBoost goes wrong</h3><p class="sub" style="margin:0">True group by predicted group</p></div>
+            <div class="seg" role="group" aria-label="Confusion matrix values" id="cmMode">
+              <button type="button" data-mode="n" aria-pressed="true">Households</button>
+              <button type="button" data-mode="p" aria-pressed="false">Row %</button>
+            </div>
+          </div>
+          <div id="cmChart"></div>
+          <p class="sub" style="margin:12px 0 0">94% of the errors fall in the group next to the correct one.</p>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <div><h3>Results for each group</h3><p class="sub" style="margin:0">Precision and recall</p></div>
+            <div class="seg" role="group" aria-label="Model" id="pcMode">
+              <button type="button" data-mode="LR" aria-pressed="false">Logistic</button>
+              <button type="button" data-mode="RF" aria-pressed="false">Forest</button>
+              <button type="button" data-mode="XGB" aria-pressed="true">XGBoost</button>
+            </div>
+          </div>
+          <div id="pcChart"></div>
+        </div>
+      </div>
+      <div class="facts">
+        <div><strong>73.0%</strong>mean accuracy in five fold cross validation, with a standard deviation of 0.5 points</div>
+        <div><strong>72.8%</strong>best of 18 tuning settings on the training set, against 72.6% for the settings used</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="predictors">
+    <div class="wrap">
+      <div class="block-head">
+        <div><span class="chapter">Predictors</span><h2>Where a household lives and how it earns a living matter most</h2></div>
+        <p>Permutation importance shows how much the accuracy of XGBoost falls when one characteristic is shuffled. SHAP values give a similar picture. Shocks carry less information than income and livelihood.</p>
+      </div>
+      <div class="grid-2">
+        <div class="panel">
+          <div class="province-stat">
+            <div class="big">18.1</div>
+            <p><strong>Province</strong> is by far the strongest predictor: shuffling it lowers accuracy by 18.1 percentage points. The next characteristics are shown below on their own scale.</p>
+          </div>
+          <div id="impChart"></div>
+          <p class="sub" style="margin:14px 0 0"><span class="dot" style="background:var(--gold)"></span>Used to build the four profiles. Irrigation source, ranked 16th here, was also used.</p>
+        </div>
+        <div class="panel">
+          <h3>How much of the signal is geography?</h3>
+          <p class="sub">Accuracy of XGBoost with different geographic information</p>
+          <div id="geoChart" class="bars-h"></div>
+          <p class="sub" style="margin:18px 0 0">Eight regions keep almost half of the gain from the 34 provinces, so part of the signal comes from broad regional differences and part from local conditions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="profiles">
+    <div class="wrap">
+      <div class="block-head">
+        <div><span class="chapter">Profiles</span><h2>Four kinds of rural households</h2></div>
+        <p>Households were grouped on the twelve most predictive characteristics with Gower distance and partitioning around medoids. Food consumption was used only afterwards, to compare the groups.</p>
+      </div>
+      <div class="profiles" id="profileCards"></div>
+      <div class="panel milk">
+        <div class="panel-head">
+          <div><h3>The livestock advantage comes from milk</h3><p class="sub" style="margin:0">Average Food Consumption Score by profile, unweighted</p></div>
+          <div class="seg" role="group" aria-label="Score version" id="milkMode">
+            <button type="button" data-mode="with" aria-pressed="true">With milk</button>
+            <button type="button" data-mode="without" aria-pressed="false">Without milk</button>
+          </div>
+        </div>
+        <div id="milkChart" class="bars-h"></div>
+        <p class="sub" style="margin:16px 0 0" id="milkNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="income">
+    <div class="wrap income-grid">
+      <div>
+        <span class="chapter">No income</span>
+        <p class="giant">57.3%</p>
+        <p class="giant-cap">of households with no income source in the previous three months had poor food consumption, against 30.5% of all other households.</p>
+      </div>
+      <div class="panel">
+        <h3>Food consumption, weighted</h3>
+        <p class="sub">These households are 9.7% of the rural population and live only on savings or debt.</p>
+        <div id="incomeChart"></div>
+        <h3 style="margin-top:26px">Found in every profile</h3>
+        <p class="sub">Households with no income source in each profile</p>
+        <div id="incomeProfiles" class="bars-h"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="time">
+    <div class="wrap">
+      <div class="block-head">
+        <div><span class="chapter">Over time</span><h2>Fewer households in the Poor group, but most only reached Borderline</h2></div>
+        <p>Rounds 4 to 8, weighted, for the 24 provinces present in every round. Rounds 6 and 8 were both collected in January and February, one year apart.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-head">
+          <div><h3>Food consumption groups by round</h3><p class="sub" style="margin:0">Share of households, weighted</p></div>
+          <div class="legend-cats" id="timeLegend"></div>
+        </div>
+        <div id="timeChart"></div>
+      </div>
+      <div class="grid-2" style="margin-top:20px">
+        <div class="panel">
+          <h3>Shocks reported, January 2023 and January 2024</h3>
+          <p class="sub">Weighted share of households. Hollow dot: Round 6. Filled dot: Round 8.</p>
+          <div id="shockChart"></div>
+        </div>
+        <div class="panel">
+          <h3>A model from 2023 could not predict 2024</h3>
+          <p class="sub">Same 26 provinces and 44 harmonized predictors</p>
+          <div id="transferChart" class="bars-h"></div>
+          <p class="sub" style="margin:18px 0 0">The 2023 model placed 61.9% of 2024 households in the Poor group, while the real share was 36.9%. Its area under the curve also fell from 0.881 to 0.633, so the relationships themselves changed. One reason is geography: the provincial Poor shares of the two years have a rank correlation of only 0.49.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer id="about">
+  <div class="wrap foot-grid">
+    <div>
+      <h2>About this dashboard</h2>
+      <p>This dashboard summarizes the bachelor's thesis <em>Machine Learning Analysis of Household Food Insecurity and Vulnerability Profiles in Afghanistan</em> by Mohammad Mahdi Sarwari, University of Cassino and Southern Lazio, supervised by Prof. Ciro Russo, academic year 2025/2026.</p>
+      <p>Shares of households are weighted with the survey weights. Model results come from a test set of 2,374 households. All results describe associations, not causes.</p>
+    </div>
+    <div>
+      <p><strong>Data.</strong> FAO Data in Emergencies Monitoring (DIEM) household surveys for Afghanistan, Rounds 4 to 8. <a href="https://microdata.fao.org/index.php/catalog/Emergencies-Monitoring-Surveys" target="_blank" rel="noopener">FAO Microdata Catalogue</a></p>
+      <p><strong>Code.</strong> Four Jupyter notebooks. <a href="https://github.com/MMSSARWARI/afghanistan-food-insecurity-thesis" target="_blank" rel="noopener">GitHub repository</a></p>
+      <p><strong>Boundaries.</strong> Natural Earth, public domain.</p>
+    </div>
+  </div>
+</footer>
+
+<div class="tip" id="tip" role="tooltip"></div>
+
+<script>
+const MAP = {"w":1024,"h":797,"provinces":[{"name":"Badakhshan","d":"M765.8,219.7L798.1,183.3L805.7,188.7L839.4,160.6L856.4,157.9L864.2,152.6L885.6,151.8L908.4,147.8L940.0,146.1L972.1,151.7L993.2,137.9L991.3,124.8L1009.4,117.7L1012.0,103.8L981.2,103.1L976.9,109.3L951.2,117.9L948.0,100.9L929.1,96.4L914.3,98.3L899.7,110.6L878.0,121.4L870.7,134.9L842.7,140.2L812.8,162.9L796.9,162.4L784.2,131.6L788.1,114.6L788.8,89.1L796.0,61.0L777.8,61.4L771.8,56.6L779.5,34.7L777.3,28.4L751.9,12.0L736.9,14.6L725.3,23.6L717.3,40.7L694.8,61.7L703.2,77.4L694.4,91.3L683.5,90.5L685.5,125.9L692.0,133.7L683.8,144.7L683.5,170.1L686.2,183.5L698.0,193.6L716.5,198.2L715.9,224.3L702.5,235.1L699.5,250.4L717.6,251.1L721.6,269.5L734.7,265.2L754.8,247.4L752.2,241.0L765.8,219.7Z","cx":783.8,"cy":134.3},{"name":"Takhar","d":"M683.5,90.5L650.0,87.5L639.3,100.2L644.0,117.3L634.5,127.4L634.2,150.1L627.9,154.9L630.7,170.3L623.1,180.6L628.2,197.1L644.0,201.4L660.7,192.6L668.2,214.0L675.2,221.9L680.5,238.5L702.5,235.1L715.9,224.3L716.5,198.2L698.0,193.6L686.2,183.5L683.5,170.1L683.8,144.7L692.0,133.7L685.5,125.9L683.5,90.5Z","cx":667.2,"cy":163.5},{"name":"Kunduz","d":"M634.5,127.4L621.4,123.0L613.0,111.3L563.8,127.7L543.9,143.6L544.8,152.9L555.4,172.0L559.0,173.8L593.1,177.0L602.9,187.3L612.6,186.9L628.2,197.1L623.1,180.6L630.7,170.3L627.9,154.9L634.2,150.1L634.5,127.4Z","cx":594.1,"cy":150.6},{"name":"Balkh","d":"M543.9,143.6L526.9,129.1L525.4,118.6L505.5,113.8L488.3,121.0L472.0,104.7L418.7,106.7L429.8,116.1L436.5,127.8L433.9,139.6L440.8,155.7L431.7,157.5L438.2,172.4L447.8,179.1L433.5,203.3L443.0,207.9L445.4,234.0L438.0,245.6L457.4,250.0L464.8,246.4L479.6,228.8L476.3,216.9L490.4,209.4L497.9,197.8L506.8,168.0L520.1,167.3L530.2,172.2L555.4,172.0L544.8,152.9L543.9,143.6Z","cx":478.0,"cy":164.0},{"name":"Jawzjan","d":"M418.7,106.7L390.7,94.1L377.6,93.0L374.4,108.0L364.9,116.8L356.3,131.4L354.4,145.3L361.8,158.7L358.1,169.7L364.6,189.6L350.0,191.7L345.3,201.5L340.7,227.7L371.1,228.5L378.8,222.4L368.0,224.6L365.1,214.1L367.6,193.5L379.1,192.5L404.4,177.3L438.2,172.4L431.7,157.5L440.8,155.7L433.9,139.6L436.5,127.8L429.8,116.1L418.7,106.7Z","cx":390.0,"cy":152.1},{"name":"Faryab","d":"M364.9,116.8L334.9,117.5L313.5,129.4L314.8,142.6L301.6,169.6L302.6,183.2L291.3,201.1L278.6,209.5L268.5,210.0L253.2,219.7L253.9,241.5L261.8,266.0L289.2,271.9L289.2,287.3L311.4,289.3L340.3,285.7L351.1,290.8L362.2,285.8L359.4,269.3L367.2,249.8L374.4,249.9L386.3,231.1L378.8,222.4L371.1,228.5L340.7,227.7L345.3,201.5L350.0,191.7L364.6,189.6L358.1,169.7L361.8,158.7L354.4,145.3L356.3,131.4L364.9,116.8Z","cx":320.2,"cy":217.0},{"name":"Badghis","d":"M253.2,219.7L231.8,225.5L213.5,234.6L198.1,234.3L202.3,246.9L194.7,254.3L195.0,270.3L176.8,279.5L166.2,303.8L164.8,316.4L191.5,337.3L214.7,338.5L228.1,345.2L246.1,349.0L260.7,344.7L272.2,335.5L293.5,335.4L328.0,327.4L333.7,312.5L329.4,304.1L311.4,289.3L289.2,287.3L289.2,271.9L261.8,266.0L253.9,241.5L253.2,219.7Z","cx":241.5,"cy":295.1},{"name":"Hirat","d":"M176.8,279.5L162.6,288.5L134.2,281.4L121.2,271.4L86.2,269.0L72.5,253.8L55.8,283.8L56.4,302.3L52.8,323.2L44.5,338.2L28.0,346.8L40.4,365.3L23.1,366.4L12.0,384.5L14.9,406.0L13.8,423.2L23.9,429.9L42.6,433.9L59.8,438.3L80.1,438.4L85.4,434.0L108.0,437.0L101.7,453.3L107.7,463.3L96.7,475.6L95.0,483.5L109.0,493.0L116.3,486.7L124.0,495.9L143.6,490.7L146.8,477.7L171.1,467.2L192.2,462.5L199.2,450.4L194.6,432.2L206.3,424.9L221.1,422.0L230.0,409.9L216.7,386.2L224.1,369.7L241.6,369.7L249.3,373.7L268.2,373.2L274.0,369.3L273.6,352.9L292.3,344.9L293.5,335.4L272.2,335.5L260.7,344.7L246.1,349.0L228.1,345.2L214.7,338.5L191.5,337.3L164.8,316.4L166.2,303.8L176.8,279.5Z","cx":127.6,"cy":376.1},{"name":"Nimroz","d":"M91.0,614.5L101.0,621.9L106.5,644.6L103.6,661.9L37.2,744.7L145.1,781.5L161.3,782.1L172.3,726.4L173.3,714.6L183.7,706.3L195.8,688.5L193.3,674.6L200.1,667.4L199.4,653.0L213.5,636.9L211.6,620.6L218.1,579.1L229.2,556.4L226.7,545.5L199.1,541.8L194.0,558.5L169.5,567.5L161.2,557.9L117.3,560.7L111.2,579.1L99.3,596.0L91.0,614.5Z","cx":142.6,"cy":663.6},{"name":"Farah","d":"M91.0,614.5L99.3,596.0L111.2,579.1L117.3,560.7L161.2,557.9L169.5,567.5L194.0,558.5L199.1,541.8L226.7,545.5L246.6,535.2L261.3,524.3L259.7,515.4L272.4,513.9L287.0,491.0L299.9,485.7L300.0,475.7L310.4,466.2L311.0,458.1L296.8,451.1L282.9,467.0L276.0,464.0L260.7,436.1L224.5,448.9L199.2,450.4L192.2,462.5L171.1,467.2L146.8,477.7L143.6,490.7L124.0,495.9L116.3,486.7L109.0,493.0L95.0,483.5L96.7,475.6L107.7,463.3L101.7,453.3L108.0,437.0L85.4,434.0L80.1,438.4L59.8,438.3L42.6,433.9L36.3,436.3L17.7,464.7L18.4,478.0L36.2,541.4L32.3,560.2L33.6,591.4L38.0,606.5L91.0,614.5Z","cx":138.5,"cy":511.5},{"name":"Kunar","d":"M752.6,345.3L768.1,328.8L774.2,318.0L786.2,312.3L798.5,290.2L791.2,281.8L795.6,268.0L770.3,280.6L762.4,298.2L743.4,301.6L729.2,296.2L723.7,307.9L726.7,324.4L731.5,341.8L752.6,345.3Z","cx":759.4,"cy":310.4},{"name":"Nuristan","d":"M765.8,219.7L752.2,241.0L754.8,247.4L734.7,265.2L721.6,269.5L717.6,251.1L699.5,250.4L692.7,266.8L677.6,278.3L681.2,287.4L685.7,298.8L693.8,299.7L701.6,312.4L710.9,315.6L723.7,307.9L729.2,296.2L743.4,301.6L762.4,298.2L770.3,280.6L795.6,268.0L795.6,260.7L777.9,226.9L765.8,219.7Z","cx":738.1,"cy":272.5},{"name":"Nangarhar","d":"M752.6,345.3L731.5,341.8L726.7,324.4L711.9,336.8L704.6,352.8L687.8,357.4L669.9,357.5L659.6,362.3L646.9,378.9L661.8,371.7L668.6,374.8L676.0,388.6L676.5,389.4L720.0,397.6L744.0,395.4L757.1,388.9L762.4,362.1L751.7,352.6L752.6,345.3Z","cx":715.7,"cy":369.0},{"name":"Khost","d":"M682.9,414.4L667.3,425.5L653.9,430.3L650.0,445.0L640.9,456.7L636.7,471.7L646.4,476.6L651.3,471.1L674.8,469.9L692.0,460.6L703.9,450.4L694.1,434.4L695.2,423.2L682.9,414.4Z","cx":671.0,"cy":447.5},{"name":"Paktya","d":"M676.5,389.4L676.0,388.6L663.2,391.6L654.3,387.8L633.7,407.0L617.9,417.1L611.6,426.1L596.6,425.4L596.4,444.1L611.3,446.7L612.6,463.9L624.1,458.2L640.9,456.7L650.0,445.0L653.9,430.3L667.3,425.5L682.9,414.4L672.0,397.4L676.5,389.4Z","cx":639.1,"cy":425.2},{"name":"Paktika","d":"M549.0,583.0L553.3,577.3L567.2,582.7L579.3,577.6L589.8,581.7L596.9,594.9L612.9,592.2L633.7,567.8L628.7,526.7L642.9,505.8L640.0,495.8L646.3,489.7L646.4,476.6L636.7,471.7L640.9,456.7L624.1,458.2L612.6,463.9L611.3,446.7L596.4,444.1L572.1,479.6L552.9,500.4L544.6,501.0L535.6,493.1L530.6,505.4L546.1,519.8L548.4,528.5L545.7,554.2L543.1,571.6L549.0,583.0Z","cx":593.8,"cy":522.0},{"name":"Zabul","d":"M549.0,583.0L543.1,571.6L545.7,554.2L536.5,556.0L522.3,549.0L524.0,534.4L513.5,518.8L518.2,513.5L500.3,494.6L498.6,485.3L486.0,478.7L472.3,483.7L470.6,491.9L457.8,493.5L448.3,501.5L440.6,497.9L424.1,513.5L424.1,520.7L439.0,519.8L436.2,530.9L423.7,546.1L425.3,565.8L413.8,576.6L423.0,588.5L439.7,581.7L448.7,574.0L467.1,584.9L484.9,582.9L500.5,600.9L524.3,601.3L538.9,593.7L549.0,583.0Z","cx":481.5,"cy":545.8},{"name":"Kandahar","d":"M524.3,601.3L500.5,600.9L484.9,582.9L467.1,584.9L448.7,574.0L439.7,581.7L423.0,588.5L413.8,576.6L425.3,565.8L423.7,546.1L436.2,530.9L439.0,519.8L424.1,520.7L403.5,526.1L373.2,513.6L359.6,539.2L347.0,535.0L338.5,556.7L326.6,558.8L317.6,575.2L311.8,611.4L307.4,669.8L306.4,697.3L295.1,769.2L333.0,771.7L414.8,746.6L425.0,736.3L416.9,728.9L422.2,713.4L423.7,695.4L419.9,681.5L426.8,654.1L439.8,649.5L450.2,630.9L467.5,620.8L473.2,627.2L495.9,629.9L524.4,619.7L513.7,611.3L524.3,601.3Z","cx":380.1,"cy":643.9},{"name":"Hilmand","d":"M295.1,769.2L306.4,697.3L307.4,669.8L311.8,611.4L317.6,575.2L326.6,558.8L338.5,556.7L347.0,535.0L351.0,515.7L343.0,504.3L343.5,485.9L355.0,469.7L356.0,458.8L345.9,446.6L318.0,460.1L311.0,458.1L310.4,466.2L300.0,475.7L299.9,485.7L287.0,491.0L272.4,513.9L259.7,515.4L261.3,524.3L246.6,535.2L226.7,545.5L229.2,556.4L218.1,579.1L211.6,620.6L213.5,636.9L199.4,653.0L200.1,667.4L193.3,674.6L195.8,688.5L183.7,706.3L173.3,714.6L172.3,726.4L161.3,782.1L229.5,775.4L265.9,784.7L274.5,775.1L295.1,769.2Z","cx":262.7,"cy":637.6},{"name":"Uruzgan","d":"M459.5,453.6L438.2,456.8L434.4,450.4L421.8,452.2L406.8,462.3L403.4,472.4L370.2,465.0L355.0,469.7L343.5,485.9L343.0,504.3L351.0,515.7L347.0,535.0L359.6,539.2L373.2,513.6L403.5,526.1L424.1,520.7L424.1,513.5L440.6,497.9L448.3,501.5L457.8,493.5L470.6,491.9L472.3,483.7L466.0,480.6L469.6,456.3L459.5,453.6Z","cx":403.8,"cy":489.8},{"name":"Ghazni","d":"M459.5,453.6L469.6,456.3L466.0,480.6L472.3,483.7L486.0,478.7L498.6,485.3L500.3,494.6L518.2,513.5L513.5,518.8L524.0,534.4L522.3,549.0L536.5,556.0L545.7,554.2L548.4,528.5L546.1,519.8L530.6,505.4L535.6,493.1L544.6,501.0L552.9,500.4L572.1,479.6L596.4,444.1L596.6,425.4L592.3,410.3L581.2,419.6L552.3,396.2L549.1,378.3L529.5,380.0L519.0,374.7L501.9,380.6L496.0,389.3L498.6,403.3L484.4,419.3L460.5,428.2L459.5,453.6Z","cx":528.3,"cy":450.9},{"name":"Panjsher","d":"M702.5,235.1L680.5,238.5L667.8,251.9L665.5,261.4L651.9,268.6L631.3,274.1L632.6,293.6L662.7,293.9L668.9,300.5L681.2,287.4L677.6,278.3L692.7,266.8L699.5,250.4L702.5,235.1Z","cx":668.5,"cy":269.7},{"name":"Kabul","d":"M675.9,319.8L663.4,337.2L655.3,337.3L644.3,342.2L640.5,330.7L628.7,318.2L611.4,316.3L603.0,339.6L601.5,350.5L610.5,362.8L625.4,366.1L632.5,361.5L646.9,378.9L659.6,362.3L669.9,357.5L675.9,319.8Z","cx":635.3,"cy":345.9},{"name":"Laghman","d":"M669.9,357.5L687.8,357.4L704.6,352.8L711.9,336.8L726.7,324.4L723.7,307.9L710.9,315.6L701.6,312.4L693.8,299.7L685.7,298.8L681.2,287.4L668.9,300.5L675.9,319.8L669.9,357.5Z","cx":692.8,"cy":327.0},{"name":"Logar","d":"M646.9,378.9L632.5,361.5L625.4,366.1L610.5,362.8L601.4,375.7L592.3,410.3L596.6,425.4L611.6,426.1L617.9,417.1L633.7,407.0L654.3,387.8L663.2,391.6L676.0,388.6L668.6,374.8L661.8,371.7L646.9,378.9Z","cx":624.5,"cy":391.3},{"name":"Kapisa","d":"M675.9,319.8L668.9,300.5L662.7,293.9L632.6,293.6L632.3,303.3L642.9,312.9L652.6,315.1L655.3,337.3L663.4,337.2L675.9,319.8Z","cx":656.2,"cy":311.1},{"name":"Maidan Wardak","d":"M603.0,339.6L581.3,333.6L570.3,339.3L562.1,324.4L544.8,334.1L540.3,341.8L507.3,334.5L493.9,337.9L502.2,364.6L501.9,380.6L519.0,374.7L529.5,380.0L549.1,378.3L552.3,396.2L581.2,419.6L592.3,410.3L601.4,375.7L610.5,362.8L601.5,350.5L603.0,339.6Z","cx":557.9,"cy":365.5},{"name":"Bamyan","d":"M501.9,380.6L502.2,364.6L493.9,337.9L507.3,334.5L540.3,341.8L544.8,334.1L562.1,324.4L555.1,306.6L543.2,302.0L549.3,280.6L548.4,268.2L532.3,270.4L513.8,267.5L493.1,270.3L472.7,277.5L459.9,275.5L449.1,289.1L425.5,293.9L426.7,314.7L455.0,337.6L447.1,355.6L435.3,359.4L439.6,377.6L437.4,387.3L448.0,394.8L456.2,392.1L478.3,395.2L496.0,389.3L501.9,380.6Z","cx":488.4,"cy":323.8},{"name":"Parwan","d":"M603.0,339.6L611.4,316.3L628.7,318.2L640.5,330.7L644.3,342.2L655.3,337.3L652.6,315.1L642.9,312.9L632.3,303.3L632.6,293.6L631.3,274.1L625.7,271.7L605.3,286.5L597.9,286.7L582.7,302.0L562.4,301.2L555.1,306.6L562.1,324.4L570.3,339.3L581.3,333.6L603.0,339.6Z","cx":604.9,"cy":311.1},{"name":"Sar-e-Pul","d":"M438.2,172.4L404.4,177.3L379.1,192.5L367.6,193.5L365.1,214.1L368.0,224.6L378.8,222.4L386.3,231.1L374.4,249.9L367.2,249.8L359.4,269.3L362.2,285.8L375.5,286.2L387.2,298.5L403.6,302.1L409.6,324.9L418.7,314.2L426.7,314.7L425.5,293.9L449.1,289.1L459.9,275.5L471.1,265.4L473.4,252.4L464.8,246.4L457.4,250.0L438.0,245.6L445.4,234.0L443.0,207.9L433.5,203.3L447.8,179.1L438.2,172.4Z","cx":411.6,"cy":244.1},{"name":"Ghor","d":"M426.7,314.7L418.7,314.2L409.6,324.9L403.6,302.1L387.2,298.5L375.5,286.2L362.2,285.8L351.1,290.8L340.3,285.7L311.4,289.3L329.4,304.1L333.7,312.5L328.0,327.4L293.5,335.4L292.3,344.9L273.6,352.9L274.0,369.3L268.2,373.2L249.3,373.7L241.6,369.7L224.1,369.7L216.7,386.2L230.0,409.9L221.1,422.0L206.3,424.9L194.6,432.2L199.2,450.4L224.5,448.9L260.7,436.1L276.0,464.0L282.9,467.0L296.8,451.1L311.0,458.1L318.0,460.1L345.9,446.6L356.5,441.4L370.9,426.4L359.6,406.8L367.1,394.8L363.4,386.1L368.0,362.8L397.9,365.0L435.3,359.4L447.1,355.6L455.0,337.6L426.7,314.7Z","cx":323.1,"cy":378.0},{"name":"Baghlan","d":"M680.5,238.5L675.2,221.9L668.2,214.0L660.7,192.6L644.0,201.4L628.2,197.1L612.6,186.9L602.9,187.3L593.1,177.0L559.0,173.8L554.3,178.1L568.3,199.9L579.6,209.4L564.9,226.1L563.8,235.4L553.7,248.7L555.8,255.3L548.4,268.2L549.3,280.6L543.2,302.0L555.1,306.6L562.4,301.2L582.7,302.0L597.9,286.7L605.3,286.5L625.7,271.7L631.3,274.1L651.9,268.6L665.5,261.4L667.8,251.9L680.5,238.5Z","cx":606.4,"cy":239.1},{"name":"Samangan","d":"M555.4,172.0L530.2,172.2L520.1,167.3L506.8,168.0L497.9,197.8L490.4,209.4L476.3,216.9L479.6,228.8L464.8,246.4L473.4,252.4L471.1,265.4L459.9,275.5L472.7,277.5L493.1,270.3L513.8,267.5L532.3,270.4L548.4,268.2L555.8,255.3L553.7,248.7L563.8,235.4L564.9,226.1L579.6,209.4L568.3,199.9L554.3,178.1L559.0,173.8L555.4,172.0Z","cx":521.3,"cy":224.4},{"name":"Daykundi","d":"M496.0,389.3L478.3,395.2L456.2,392.1L448.0,394.8L437.4,387.3L439.6,377.6L435.3,359.4L397.9,365.0L368.0,362.8L363.4,386.1L367.1,394.8L359.6,406.8L370.9,426.4L356.5,441.4L345.9,446.6L356.0,458.8L355.0,469.7L370.2,465.0L403.4,472.4L406.8,462.3L421.8,452.2L434.4,450.4L438.2,456.8L459.5,453.6L460.5,428.2L484.4,419.3L498.6,403.3L496.0,389.3Z","cx":413.3,"cy":415.3}]};
+const PROV = {
+  'Ghor': [76.4, 74.3, 2, 67.4], 'Bamyan': [66.3, 67.5, 1, 40.7], 'Laghman': [62.7, 65.0, 1, 68.6], 'Balkh': [62.5, 73.6, 1, 68.5],
+  'Khost': [61.0, 61.1, 0, 40.4], 'Daykundi': [60.6, 65.3, 2, 60.1], 'Kunduz': [60.2, 59.1, 1, 84.8], 'Nimroz': [47.1, 43.4, 3, 42.0],
+  'Paktika': [46.9, 46.2, 1, 66.0], 'Nangarhar': [46.6, 46.2, 1, 58.5], 'Baghlan': [44.2, 44.6, 3, 38.2], 'Paktya': [38.3, 44.4, 1, 64.2],
+  'Badakhshan': [37.0, 34.1, 0, 46.7], 'Sar-e-Pul': [36.2, 34.8, 0, 45.3], 'Jawzjan': [36.1, 34.3, 2, 56.3], 'Takhar': [33.5, 39.2, 1, 37.8],
+  'Farah': [33.3, 29.8, 2, 59.3], 'Ghazni': [33.1, 32.5, 1, 71.5], 'Samangan': [31.5, 48.6, 1, 47.2], 'Badghis': [29.7, 32.2, 1, 43.6],
+  'Kapisa': [28.4, 29.4, 1, 67.3], 'Kabul': [24.0, 25.1, 2, 62.5], 'Uruzgan': [23.8, 20.9, 1, 64.0], 'Parwan': [23.7, 23.4, 1, 73.5],
+  'Kandahar': [19.7, 9.0, 1, 87.1], 'Maidan Wardak': [19.4, 19.6, 1, 33.7], 'Faryab': [16.1, 15.1, 3, 38.4], 'Nuristan': [15.2, 14.9, 2, 58.1],
+  'Zabul': [15.0, 15.6, 0, 40.6], 'Kunar': [12.2, 12.6, 1, 36.8], 'Panjsher': [10.9, 11.2, 0, 50.9], 'Hilmand': [10.6, 12.5, 1, 54.3],
+  'Hirat': [8.9, 11.1, 2, 45.1], 'Logar': [6.5, 6.9, 1, 53.3]
+};
+const PROFILES = [
+  { name: 'Livestock-based households', n: 1926, fcg: [21.2, 50.7, 28.1], fcs: 37.0, shocks: 3.65, milk: 2.67, fcsRaw: 37.2, noMilk: 26.5, noInc: 202,
+    traits: ['60% earn their main income from livestock, against 14% of all households', 'Most keep cattle', 'Few report a need for crop inputs'] },
+  { name: 'Crop farmers reporting input needs', n: 4062, fcg: [38.3, 40.8, 20.9], fcs: 33.3, shocks: 4.27, milk: 1.64, fcsRaw: 33.1, noMilk: 26.6, noInc: 242,
+    traits: ['99.7% report a need for crop inputs', 'Most grow staple crops', 'Half irrigate from rivers, lakes or streams'] },
+  { name: 'Crop farmers without reported input needs', n: 2390, fcg: [25.9, 57.9, 16.2], fcs: 33.9, shocks: 3.23, milk: 1.70, fcsRaw: 33.9, noMilk: 27.0, noInc: 292,
+    traits: ['None report a need for crop inputs', 'Most grow staple crops', 'Most keep no livestock'] },
+  { name: 'Non-agricultural households', n: 1116, fcg: [55.8, 34.7, 9.5], fcs: 28.6, shocks: 3.03, milk: 1.10, fcsRaw: 28.8, noMilk: 24.4, noInc: 357,
+    traits: ['Almost none grow crops or keep livestock', '38% live on daily wages off the farm', '32% have no income source at all'] }
+];
+const MODELS = {
+  LR: { name: 'Logistic regression', acc: 0.623, bal: 0.633, f1: 0.621, pc: [[0.660, 0.660], [0.650, 0.573], [0.535, 0.665]] },
+  RF: { name: 'Random forest', acc: 0.684, bal: 0.686, f1: 0.681, pc: [[0.705, 0.752], [0.690, 0.635], [0.639, 0.671]] },
+  XGB: { name: 'XGBoost', acc: 0.722, bal: 0.700, f1: 0.716, pc: [[0.751, 0.728], [0.672, 0.777], [0.828, 0.594]] }
+};
+const CM = [[617, 222, 8], [172, 800, 57], [33, 169, 296]];
+const IMPORTANCE = [
+  ['Total income', 3.37, 1], ['Main livestock type', 1.47, 1], ['Drinking water source', 1.15, 1], ['Second income source', 1.11, 1],
+  ['Number of shocks', 1.04, 1], ['Land size', 1.03, 1], ['Main income source', 0.74, 1], ['Change in main income', 0.60, 1],
+  ['Other economic shock', 0.53, 0], ['Need for infrastructure rehabilitation', 0.51, 1], ['Sickness or death in household', 0.49, 0],
+  ['Need for crop inputs', 0.49, 1], ['Pest outbreak', 0.45, 0], ['Lighting source', 0.44, 1]
+];
+const GEO = [['With 34 provinces', 72.2], ['With 8 regions', 69.3], ['Without province', 67.1], ['Province only', 57.2], ['Always Borderline', 43.3]];
+const ROUNDS = [
+  { r: 'Round 4', when: 'Mar to Apr 2022', v: [59.3, 25.3, 15.4] }, { r: 'Round 5', when: 'Jul to Aug 2022', v: [39.6, 31.7, 28.7] },
+  { r: 'Round 6', when: 'Jan to Feb 2023', v: [54.6, 29.1, 16.4] }, { r: 'Round 7', when: 'Sep to Oct 2023', v: [54.6, 30.5, 14.8] },
+  { r: 'Round 8', when: 'Jan to Feb 2024', v: [32.3, 48.7, 19.0] }
+];
+const SHOCKS = [
+  ['Higher food prices', 77.0, 63.7], ['Drought', 50.0, 59.9], ['Sickness or death in household', 26.8, 40.2], ['Plant disease', 32.3, 34.8],
+  ['Loss of employment or work', 29.5, 25.2], ['Other economic shock', 14.5, 23.7], ['Higher fuel prices', 56.7, 22.5],
+  ['Cold temperatures or hail', 41.5, 20.6], ['Pest outbreak', 28.0, 18.5], ['Other shock within household', 16.9, 17.6]
+];
+const GROUPS = ['Poor', 'Borderline', 'Acceptable'];
+const GVAR = ['--poor', '--borderline', '--acceptable'];
+const PVAR = ['--p0', '--p1', '--p2', '--p3'];
+
+const $ = (s) => document.querySelector(s);
+const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const fmt1 = (x) => x.toFixed(1);
+const pct = (x) => (x * 100).toFixed(1) + '%';
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* tooltip */
+const tip = $('#tip');
+function showTip(html, x, y) {
+  tip.innerHTML = html; tip.classList.add('show');
+  const r = tip.getBoundingClientRect();
+  let left = x + 14, top = y + 14;
+  if (left + r.width > window.innerWidth - 8) left = x - r.width - 14;
+  if (top + r.height > window.innerHeight - 8) top = y - r.height - 14;
+  tip.style.left = left + 'px'; tip.style.top = top + 'px';
+}
+function hideTip() { tip.classList.remove('show'); }
+
+/* segmented controls */
+function seg(id, onChange) {
+  const el = $(id);
+  el.addEventListener('click', (e) => {
+    const b = e.target.closest('button'); if (!b) return;
+    el.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    onChange(b.dataset.mode);
+  });
+  return () => el.querySelector('[aria-pressed="true"]').dataset.mode;
+}
+
+/* colour helpers */
+function hex2rgb(h) { h = h.replace('#', ''); return [0, 2, 4].map((i) => parseInt(h.slice(i, i + 2), 16)); }
+function mix(a, b, t) { const A = hex2rgb(a), B = hex2rgb(b); return 'rgb(' + A.map((v, i) => Math.round(v + (B[i] - v) * t)).join(',') + ')'; }
+function ramp(v) {
+  const stops = [[5, css('--acceptable')], [24, css('--ramp-mid')], [46, css('--borderline')], [78, css('--poor')]];
+  if (v <= stops[0][0]) return stops[0][1];
+  for (let i = 0; i < stops.length - 1; i++) {
+    const [v0, c0] = stops[i], [v1, c1] = stops[i + 1];
+    if (v <= v1) return mix(c0, c1, (v - v0) / (v1 - v0));
+  }
+  return stops[stops.length - 1][1];
+}
+
+/* hero distribution */
+function renderHero() {
+  const v = [33.1, 47.0, 19.9];
+  $('#heroStack').innerHTML = v.map((x, i) => `<span style="width:${x}%;background:var(${GVAR[i]})"></span>`).join('');
+  $('#heroLegend').innerHTML = v.map((x, i) => `<span><span class="dot" style="background:var(${GVAR[i]})"></span>${GROUPS[i]} <b>${fmt1(x)}%</b></span>`).join('');
+}
+
+/* map */
+let mapMode = 'w', pinned = null;
+const ranking = Object.keys(PROV).sort((a, b) => PROV[b][0] - PROV[a][0]);
+function renderMap() {
+  const svg = $('#mapSvg');
+  svg.setAttribute('viewBox', `0 0 ${MAP.w} ${MAP.h}`);
+  svg.innerHTML = MAP.provinces.map((p) =>
+    `<path class="prov" d="${p.d}" data-name="${esc(p.name)}" tabindex="0" role="button" aria-label="${esc(p.name)}"></path>`).join('');
+  svg.querySelectorAll('.prov').forEach((el) => {
+    const name = el.dataset.name;
+    el.addEventListener('mouseenter', () => showDetail(name));
+    el.addEventListener('mousemove', (e) => showTip(`<b>${esc(name)}</b><br>${tipText(name)}`, e.clientX, e.clientY));
+    el.addEventListener('mouseleave', () => { hideTip(); showDetail(pinned); });
+    el.addEventListener('focus', () => showDetail(name));
+    el.addEventListener('blur', () => showDetail(pinned));
+    el.addEventListener('click', () => { pinned = name; showDetail(name); });
+    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pinned = name; showDetail(name); } });
+  });
+  paintMap(true);
+}
+function tipText(name) {
+  const d = PROV[name];
+  if (mapMode === 'prof') return `Most common: ${PROFILES[d[2]].name.toLowerCase()} (${fmt1(d[3])}%)`;
+  return `${fmt1(mapMode === 'w' ? d[0] : d[1])}% Poor`;
+}
+function colorFor(name) {
+  const d = PROV[name];
+  if (!d) return css('--map-empty');
+  if (mapMode === 'prof') return css(PVAR[d[2]]);
+  return ramp(mapMode === 'w' ? d[0] : d[1]);
+}
+function paintMap(first) {
+  const paths = [...document.querySelectorAll('#mapSvg .prov')];
+  paths.forEach((el) => {
+    const c = colorFor(el.dataset.name);
+    if (first && !reduced) {
+      el.style.fill = css('--map-empty');
+      const order = ranking.indexOf(el.dataset.name);
+      setTimeout(() => { el.style.fill = c; }, 250 + (ranking.length - order) * 38);
+    } else el.style.fill = c;
+  });
+  renderLegend();
+  if (document.getElementById('rankTop')) renderRanking();
+}
+function renderLegend() {
+  const el = $('#legend');
+  const note = $('#mapNote');
+  if (note) note.textContent = mapMode === 'prof'
+    ? 'Most common of the four profiles in each province, DIEM Round 8, unweighted. Province boundaries: Natural Earth.'
+    : `Share of households in the Poor food consumption group, DIEM Round 8, ${mapMode === 'w' ? 'weighted' : 'unweighted'}. Province boundaries: Natural Earth.`;
+  if (mapMode === 'prof') {
+    el.innerHTML = `<div class="legend-cats">${PROFILES.map((p, i) => `<span><span class="dot" style="background:var(${PVAR[i]})"></span>${p.name}</span>`).join('')}</div>`;
+  } else {
+    const g = [5, 22, 40, 59, 78].map((v) => ramp(v)).join(',');
+    el.innerHTML = `<div class="legend"><span>5%</span><span class="ramp" style="background:linear-gradient(90deg,${g})"></span><span>78% Poor</span></div>`;
+  }
+}
+function showDetail(name) {
+  document.querySelectorAll('#mapSvg .prov').forEach((el) => {
+    const on = el.dataset.name === name; el.classList.toggle('is-active', on);
+    if (on && el.parentNode.lastElementChild !== el) el.parentNode.appendChild(el);
+  });
+  document.querySelectorAll('.rank-row').forEach((el) => el.classList.toggle('is-active', el.dataset.name === name));
+  const box = $('#detail');
+  if (!name) {
+    box.innerHTML = `<p class="detail-name">All rural provinces</p><p class="detail-hint">Hover or select a province on the map</p>
+      <div class="detail-big"><span class="num">33.1%</span><span class="txt">of rural households had poor food consumption</span></div>
+      <div class="detail-rows"><div><span>Highest</span><strong>Ghor, 76.4%</strong></div><div><span>Lowest</span><strong>Logar, 6.5%</strong></div></div>`;
+    return;
+  }
+  const d = PROV[name];
+  box.innerHTML = `<p class="detail-name">${esc(name)}</p><p class="detail-hint">Rank ${ranking.indexOf(name) + 1} of 34 by weighted Poor share</p>
+    <div class="detail-big"><span class="num">${fmt1(d[0])}%</span><span class="txt">of rural households had poor food consumption, weighted</span></div>
+    <div class="detail-rows"><div><span>Unweighted share</span><strong>${fmt1(d[1])}%</strong></div>
+    <div><span>Most common profile</span><strong><span class="dot" style="background:var(${PVAR[d[2]]})"></span>${PROFILES[d[2]].name}, ${fmt1(d[3])}%</strong></div></div>`;
+}
+
+function renderRanking() {
+  const row = (name) => {
+    const v = PROV[name][0];
+    return `<button type="button" class="rank-row" data-name="${esc(name)}"><span class="n">${ranking.indexOf(name) + 1}</span><span>${esc(name)}</span>`
+      + `<span class="mini" style="width:${Math.max(8, (v / 80) * 64)}px;background:${ramp(v)}"></span><span class="v">${fmt1(v)}%</span></button>`;
+  };
+  $('#rankTop').innerHTML = ranking.slice(0, 5).map(row).join('');
+  $('#rankLow').innerHTML = ranking.slice(-5).reverse().map(row).join('');
+  document.querySelectorAll('.rank-row').forEach((b) => {
+    b.addEventListener('click', () => { pinned = b.dataset.name; showDetail(pinned); document.getElementById('detail').scrollIntoView({ block: 'nearest', behavior: reduced ? 'auto' : 'smooth' }); });
+    b.addEventListener('mouseenter', () => showDetail(b.dataset.name));
+    b.addEventListener('mouseleave', () => showDetail(pinned));
+  });
+}
+
+/* svg helpers */
+function svgEl(w, h, inner, label) { return `<svg class="chart" viewBox="0 0 ${w} ${h}" role="img" aria-label="${esc(label)}">${inner}</svg>`; }
+
+/* model comparison */
+function renderModels() {
+  const W = 420, rowH = 84, top = 4, left = 4, right = 52, H = top + rowH * 3 + 30;
+  const x = (v) => left + (v / 0.8) * (W - left - right);
+  const metrics = [['acc', 'Accuracy', '--gold'], ['bal', 'Balanced accuracy', '--ink-3'], ['f1', 'Macro F1', '--acceptable']];
+  let s = '';
+  [0, 0.2, 0.4, 0.6, 0.8].forEach((t) => { s += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${H - 24}"/><text x="${x(t)}" y="${H - 8}" text-anchor="middle">${t * 100}%</text>`; });
+  ['LR', 'RF', 'XGB'].forEach((k, i) => {
+    const m = MODELS[k], y0 = top + i * rowH + 22;
+    s += `<text class="t-strong" x="${left}" y="${y0 - 8}">${m.name}</text>`;
+    metrics.forEach(([key, label, color], j) => {
+      const y = y0 + j * 18;
+      s += `<rect x="${left}" y="${y}" width="${x(m[key]) - left}" height="12" rx="6" fill="var(${color})" data-tip="<b>${m.name}</b><br>${label}: ${pct(m[key])}"/>`;
+      s += `<text x="${x(m[key]) + 6}" y="${y + 10}" class="${k === 'XGB' && key === 'acc' ? 't-strong' : ''}">${pct(m[key])}</text>`;
+    });
+  });
+  s += `<line x1="${x(0.433)}" x2="${x(0.433)}" y1="${top - 4}" y2="${H - 24}" stroke="var(--poor)" stroke-dasharray="4 4" stroke-width="1.5"/>`;
+  const legend = metrics.map(([, label, color]) => `<span><span class="dot" style="background:var(${color})"></span>${label}</span>`).join('');
+  $('#modelChart').innerHTML = svgEl(W, H, s, 'Accuracy, balanced accuracy and macro F1 for three models') + `<div class="legend-cats" style="margin-top:8px">${legend}</div>`;
+}
+
+/* confusion matrix */
+function renderCM(mode) {
+  const W = 330, H = 300, left = 84, top = 34, cell = (W - left) / 3, ch = (H - top - 10) / 3;
+  let s = '';
+  GROUPS.forEach((g, j) => { s += `<text x="${left + cell * j + cell / 2}" y="${top - 12}" text-anchor="middle">${g}</text>`; });
+  CM.forEach((row, i) => {
+    const tot = row.reduce((a, b) => a + b, 0);
+    s += `<text x="${left - 10}" y="${top + ch * i + ch / 2 + 4}" text-anchor="end">${GROUPS[i]}</text>`;
+    row.forEach((v, j) => {
+      const share = v / tot, diag = i === j;
+      const fill = diag ? 'var(--gold)' : 'var(--poor)';
+      const op = (0.12 + 0.88 * share).toFixed(2);
+      const label = mode === 'n' ? v.toLocaleString('en') : (share * 100).toFixed(1) + '%';
+      s += `<rect x="${left + cell * j + 2}" y="${top + ch * i + 2}" width="${cell - 4}" height="${ch - 4}" rx="10" fill="${fill}" fill-opacity="${op}"
+        data-tip="<b>True ${GROUPS[i]}, predicted ${GROUPS[j]}</b><br>${v} households, ${(share * 100).toFixed(1)}% of the row"/>`;
+      s += `<text x="${left + cell * j + cell / 2}" y="${top + ch * i + ch / 2 + 6}" text-anchor="middle" class="t-strong" style="font-size:16px">${label}</text>`;
+    });
+  });
+  $('#cmChart').innerHTML = svgEl(W, H, s, 'Confusion matrix of XGBoost on the test set');
+}
+
+/* per class */
+function renderPC(key) {
+  const m = MODELS[key], W = 330, H = 270, left = 86, right = 44, top = 8, rowH = 82;
+  const x = (v) => left + v * (W - left - right);
+  let s = '';
+  [0, 0.25, 0.5, 0.75, 1].forEach((t) => { s += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="${top}" y2="${H - 22}"/><text x="${x(t)}" y="${H - 6}" text-anchor="middle">${t * 100}%</text>`; });
+  GROUPS.forEach((g, i) => {
+    const y0 = top + i * rowH + 10, [p, r] = m.pc[i];
+    s += `<text class="t-strong" x="0" y="${y0 + 22}">${g}</text>`;
+    s += `<rect x="${left}" y="${y0}" width="${x(p) - left}" height="14" rx="7" fill="var(${GVAR[i]})" data-tip="<b>${g}</b><br>Precision ${pct(p)}: share of predicted ${g} households that are ${g}"/>`;
+    s += `<text x="${x(p) + 6}" y="${y0 + 11}">${pct(p)}</text>`;
+    s += `<rect x="${left}" y="${y0 + 22}" width="${x(r) - left}" height="14" rx="7" fill="var(${GVAR[i]})" fill-opacity="0.45" data-tip="<b>${g}</b><br>Recall ${pct(r)}: share of ${g} households the model finds"/>`;
+    s += `<text x="${x(r) + 6}" y="${y0 + 33}">${pct(r)}</text>`;
+  });
+  $('#pcChart').innerHTML = svgEl(W, H, s, 'Precision and recall by group for ' + m.name) +
+    `<div class="legend-cats" style="margin-top:6px"><span><span class="dot" style="background:var(--ink-2)"></span>Precision, solid</span><span><span class="dot" style="background:var(--ink-2);opacity:.45"></span>Recall, light</span></div>`;
+}
+
+/* importance */
+function renderImportance() {
+  const W = 560, rowH = 26, left = 238, right = 44, H = IMPORTANCE.length * rowH + 26;
+  const x = (v) => left + (v / 3.6) * (W - left - right);
+  let s = '';
+  [0, 1, 2, 3].forEach((t) => { s += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${H - 20}"/><text x="${x(t)}" y="${H - 4}" text-anchor="middle">${t} pt</text>`; });
+  IMPORTANCE.forEach(([name, v, sel], i) => {
+    const y = i * rowH + 4;
+    if (sel) s += `<circle cx="${left - 14}" cy="${y + 8}" r="4" fill="var(--gold)"/>`;
+    s += `<text x="${left - 26}" y="${y + 12}" text-anchor="end" class="${sel ? 't-ink' : ''}">${name}</text>`;
+    s += `<rect x="${left}" y="${y + 1}" width="${x(v) - left}" height="14" rx="7" fill="${sel ? 'var(--gold)' : 'var(--ink-3)'}" fill-opacity="${sel ? 0.9 : 0.55}" data-tip="<b>${name}</b><br>Accuracy falls by ${v.toFixed(2)} percentage points when shuffled"/>`;
+    s += `<text x="${x(v) + 6}" y="${y + 12}">${v.toFixed(2)}</text>`;
+  });
+  $('#impChart').innerHTML = svgEl(W, H, s, 'Permutation importance of the fourteen predictors after province');
+}
+
+/* horizontal html bars */
+function hbars(el, rows, max, unit, colors) {
+  $(el).innerHTML = rows.map(([label, v], i) =>
+    `<div class="bar-row"><span>${label}</span><div class="track"><div class="fill" style="width:${(v / max) * 100}%;background:${colors[i]}"></div></div><span class="val">${typeof v === 'number' ? v.toFixed(1) : v}${unit}</span></div>`).join('');
+}
+function renderGeo() {
+  hbars('#geoChart', GEO, 80, '%', GEO.map((_, i) => i === 0 ? 'var(--gold)' : i === 4 ? 'var(--poor)' : 'var(--ink-3)'));
+}
+
+/* profiles */
+function renderProfiles() {
+  $('#profileCards').innerHTML = PROFILES.map((p, i) => `
+    <article class="profile" style="--pc:var(${PVAR[i]})">
+      <span class="pnum">Profile ${i}</span>
+      <h3>${p.name}</h3>
+      <div class="hh">${p.n.toLocaleString('en')} households</div>
+      <div class="poor"><b>${fmt1(p.fcg[0])}%</b><span>in the Poor group, weighted</span></div>
+      <div class="stack" role="img" aria-label="Poor ${p.fcg[0]}, borderline ${p.fcg[1]}, acceptable ${p.fcg[2]} percent">
+        ${p.fcg.map((v, j) => `<span style="width:${v}%;background:var(${GVAR[j]})" data-tip="<b>${GROUPS[j]}</b><br>${fmt1(v)}% of ${p.name.toLowerCase()}"></span>`).join('')}
+      </div>
+      <ul>${p.traits.map((t) => `<li>${t}</li>`).join('')}</ul>
+      <div class="stats"><div><strong>${fmt1(p.fcs)}</strong>average score, weighted</div><div><strong>${p.shocks.toFixed(1)}</strong>shocks reported</div><div><strong>${p.milk.toFixed(1)}</strong>days with milk</div></div>
+    </article>`).join('');
+}
+function renderMilk(mode) {
+  const rows = PROFILES.map((p) => [p.name, mode === 'with' ? p.fcsRaw : p.noMilk]);
+  hbars('#milkChart', rows, 42, '', PROFILES.map((_, i) => `var(${PVAR[i]})`));
+  $('#milkNote').textContent = mode === 'with'
+    ? 'Livestock-based households eat dairy products on 2.7 days a week, against 1.6 and 1.7 days for the two crop farming profiles. Switch to see the score without milk.'
+    : 'Without the milk component, the first three profiles have almost the same score: 26.5, 26.6 and 27.0.';
+}
+
+/* no income */
+function renderIncome() {
+  const rows = [['No income source', [57.3, 33.0, 9.7]], ['All other households', [30.5, 48.5, 20.9]]];
+  $('#incomeChart').innerHTML = rows.map(([label, v]) => `
+    <div style="margin:14px 0 4px;font-size:.9rem;display:flex;justify-content:space-between"><span>${label}</span><span style="color:var(--ink-3)">Poor <b style="color:var(--ink)">${fmt1(v[0])}%</b></span></div>
+    <div class="stack" style="height:22px">${v.map((x, j) => `<span style="width:${x}%;background:var(${GVAR[j]})" data-tip="<b>${label}</b><br>${GROUPS[j]}: ${fmt1(x)}%"></span>`).join('')}</div>`).join('') +
+    `<div class="stack-legend">${GROUPS.map((g, j) => `<span><span class="dot" style="background:var(${GVAR[j]})"></span>${g}</span>`).join('')}</div>`;
+  $('#incomeProfiles').innerHTML = PROFILES.map((p, i) =>
+    `<div class="bar-row"><span>${p.name}</span><div class="track"><div class="fill" style="width:${(p.noInc / 400) * 100}%;background:var(${PVAR[i]})"></div></div><span class="val">${p.noInc}</span></div>`).join('');
+}
+
+/* time */
+function renderTime() {
+  const W = 1100, H = 360, left = 46, right = 120, top = 26, bottom = 56;
+  const xs = (i) => left + i * ((W - left - right) / (ROUNDS.length - 1));
+  const ys = (v) => top + (1 - v / 70) * (H - top - bottom);
+  let s = '';
+  [0, 10, 20, 30, 40, 50, 60, 70].forEach((t) => { s += `<line class="grid" x1="${left}" x2="${W - right + 20}" y1="${ys(t)}" y2="${ys(t)}"/><text x="${left - 10}" y="${ys(t) + 4}" text-anchor="end">${t}%</text>`; });
+  s += `<rect x="${xs(2) - 14}" y="${top - 14}" width="${xs(4) - xs(2) + 28}" height="${H - top - bottom + 20}" rx="14" fill="var(--gold)" fill-opacity="0.07" stroke="var(--gold-line)" stroke-dasharray="3 5"/>`;
+  s += `<text x="${(xs(2) + xs(4)) / 2}" y="${top - 1}" text-anchor="middle" style="fill:var(--gold);font-style:italic;font-family:var(--serif);font-size:16px">Same season, one year apart</text>`;
+  ROUNDS.forEach((r, i) => {
+    s += `<text x="${xs(i)}" y="${H - bottom + 24}" text-anchor="middle" class="t-strong">${r.r}</text><text x="${xs(i)}" y="${H - bottom + 42}" text-anchor="middle">${r.when}</text>`;
+  });
+  GROUPS.forEach((g, j) => {
+    const pts = ROUNDS.map((r, i) => `${xs(i)},${ys(r.v[j])}`).join(' ');
+    s += `<polyline points="${pts}" fill="none" stroke="var(${GVAR[j]})" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>`;
+    ROUNDS.forEach((r, i) => {
+      s += `<circle cx="${xs(i)}" cy="${ys(r.v[j])}" r="6" fill="var(--surface)" stroke="var(${GVAR[j]})" stroke-width="3" data-tip="<b>${r.r}, ${r.when}</b><br>${g}: ${fmt1(r.v[j])}%"/>`;
+    });
+    const last = ROUNDS[ROUNDS.length - 1].v[j];
+    s += `<text x="${xs(4) + 16}" y="${ys(last) + 5}" class="t-strong" style="fill:var(${GVAR[j]})">${g} ${fmt1(last)}%</text>`;
+  });
+  $('#timeChart').innerHTML = svgEl(W, H, s, 'Food consumption groups from Round 4 to Round 8');
+  $('#timeLegend').innerHTML = GROUPS.map((g, j) => `<span><span class="dot" style="background:var(${GVAR[j]})"></span>${g}</span>`).join('');
+}
+
+/* shocks dumbbell */
+function renderShocks() {
+  const rows = [...SHOCKS].sort((a, b) => b[2] - a[2]);
+  const W = 560, rowH = 30, left = 214, right = 30, H = rows.length * rowH + 30;
+  const x = (v) => left + (v / 80) * (W - left - right);
+  let s = '';
+  [0, 20, 40, 60, 80].forEach((t) => { s += `<line class="grid" x1="${x(t)}" x2="${x(t)}" y1="0" y2="${H - 22}"/><text x="${x(t)}" y="${H - 6}" text-anchor="middle">${t}%</text>`; });
+  rows.forEach(([name, a, b], i) => {
+    const y = i * rowH + 14, up = b > a, col = up ? 'var(--poor)' : 'var(--acceptable)';
+    s += `<text x="${left - 14}" y="${y + 4}" text-anchor="end">${name}</text>`;
+    s += `<line x1="${x(a)}" x2="${x(b)}" y1="${y}" y2="${y}" stroke="${col}" stroke-width="3" stroke-opacity="0.55"/>`;
+    s += `<circle cx="${x(a)}" cy="${y}" r="5.5" fill="var(--surface)" stroke="${col}" stroke-width="2"/>`;
+    s += `<circle cx="${x(b)}" cy="${y}" r="6" fill="${col}" data-tip="<b>${name}</b><br>Round 6: ${fmt1(a)}%<br>Round 8: ${fmt1(b)}% (${up ? '+' : ''}${(b - a).toFixed(1)} points)"/>`;
+  });
+  $('#shockChart').innerHTML = svgEl(W, H, s, 'Shocks reported in Round 6 and Round 8');
+}
+
+/* transfer */
+function renderTransfer() {
+  $('#transferChart').innerHTML = [
+    ['Trained on 2024, tested on 2024', 73.5, 'var(--gold)'], ['Trained on 2023, tested on 2024', 44.4, 'var(--poor)'], ['Always guessing Borderline', 43.3, 'var(--ink-3)']
+  ].map(([l, v, c]) => `<div class="bar-row"><span>${l}</span><div class="track"><div class="fill" style="width:${(v / 80) * 100}%;background:${c}"></div></div><span class="val">${fmt1(v)}%</span></div>`).join('') +
+  `<p class="sub" style="margin:4px 0 0">Accuracy on Round 8</p>`;
+}
+
+/* chart tooltips via delegation */
+document.addEventListener('mousemove', (e) => {
+  const t = e.target.closest('[data-tip]');
+  if (t) showTip(t.getAttribute('data-tip'), e.clientX, e.clientY);
+  else if (!e.target.closest('.prov')) hideTip();
+});
+
+/* theme */
+function applyTheme(t) {
+  if (t) document.documentElement.setAttribute('data-theme', t); else document.documentElement.removeAttribute('data-theme');
+  paintMap(false); renderAllCharts();
+}
+function currentTheme() {
+  const t = document.documentElement.getAttribute('data-theme');
+  if (t) return t;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+$('#themeBtn').addEventListener('click', () => {
+  const next = currentTheme() === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem('afg-theme', next); } catch (e) {}
+  applyTheme(next);
+});
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { paintMap(false); });
+
+let getCM, getPC, getMilk;
+function renderAllCharts() {
+  renderModels(); renderCM(getCM ? getCM() : 'n'); renderPC(getPC ? getPC() : 'XGB'); renderImportance(); renderGeo();
+  renderMilk(getMilk ? getMilk() : 'with'); renderIncome(); renderTime(); renderShocks(); renderTransfer();
+}
+
+(function init() {
+  try { const saved = localStorage.getItem('afg-theme'); if (saved === 'light' || saved === 'dark') document.documentElement.setAttribute('data-theme', saved); } catch (e) {}
+  renderHero(); renderProfiles();
+  getCM = seg('#cmMode', renderCM); getPC = seg('#pcMode', renderPC); getMilk = seg('#milkMode', renderMilk);
+  seg('#mapMode', (m) => { mapMode = m; paintMap(false); showDetail(pinned); });
+  renderAllCharts(); renderMap(); showDetail(null);
+})();
+</script>
+</body>
+</html>
